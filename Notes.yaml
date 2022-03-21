@@ -1,0 +1,10 @@
+pages:
+  - home: karşılama ekranı genel bir ekran görüntüsü ile büyük bir başlık yönlendirme
+  - about-and-help: genel bilgiler
+  - go-to-app: uygulamaya gidecek ekran
+
+folders:
+  - components: base components, can be subfoldered
+  - views: home, about, educatied(app screen)
+  - services: firebase, vs ui dışında olan dosyalar
+
