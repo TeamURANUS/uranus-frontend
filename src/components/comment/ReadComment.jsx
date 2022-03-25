@@ -11,7 +11,7 @@ const ReadComment = (props) => {
             avatar={<Avatar src="https://joeschmoe.io/api/v1/random" alt={props.name}/>}
             content={
                 <p>
-                    IE classes are fun
+                    {props.text}
                 </p>
             }
             datetime={

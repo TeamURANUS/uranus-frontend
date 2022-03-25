@@ -31,7 +31,7 @@ class WriteComment extends React.Component {
         comments: [],
         submitting: false,
         value: '',
-        name: 'Ekrem Sonmezer',
+        name: '',
         avatarID: Math.floor(Math.random() * 18)
     };
 
