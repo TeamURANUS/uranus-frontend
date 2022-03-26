@@ -5,7 +5,7 @@ import 'antd/dist/antd.css';
 const {TextArea} = Input;
 
 
-const onChange = () => {
+const onSubmit = () => {
     //TODO after submission create readpost object
 };
 
@@ -18,7 +18,7 @@ const WritePost = (props) => {
             <br/>
             <TextArea placeholder="Enter the content for post" showCount allowClear/>
             <br/>
-            <Button type="primary" onClick={onChange}>Submit Post</Button>
+            <Button type="primary" onClick={onSubmit}>Submit Post</Button>
         </Form>
     );
 }
