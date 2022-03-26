@@ -1,0 +1,14 @@
+#read-post .ant-comment-inner .ant-comment-content .ant-comment-content-detail {
+    font-size: 20px;
+}
+
+#title-text {
+    font-size: 35px;
+    color: rgba(0, 0, 0, 0.85);
+    font-family: 'Segoe UI';
+}
+
+#post-card {
+    border: 5px solid #efefef;
+    border-radius: 5%;
+}

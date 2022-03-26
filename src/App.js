@@ -1,11 +1,11 @@
 import ReadComment from "./components/comment/ReadComment";
 import WriteComment from "./components/comment/WriteComment";
+import ReadPost from "./components/post/ReadPost";
+import WritePost from "./components/post/WritePost";
 
 function App() {
     return (
         <div>
-            <ReadComment name="Student-1" text="IE classes are fun"/>
-            <WriteComment name="Student-2"/>
         </div>
     );
 }
