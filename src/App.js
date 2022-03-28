@@ -1,13 +1,30 @@
-import ReadComment from "./components/comment/ReadComment";
-import WriteComment from "./components/comment/WriteComment";
-import ReadPost from "./components/post/ReadPost";
-import WritePost from "./components/post/WritePost";
-import ReadNew from "./components/new/ReadNew";
+import Home from "./views/Home";
+import About from "./views/About";
+import Educatied from "./views/Educatied";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route
+} from "react-router-dom";
+
 
 function App() {
     return (
-        <div>
-        </div>
+        <Router>
+            <div>
+                <Switch>
+                    <Route exact path="/">
+                        <Home/>
+                    </Route>
+                    <Route path="/about">
+                        <About/>
+                    </Route>
+                    <Route path="/educatied">
+                        <Educatied/>
+                    </Route>
+                </Switch>
+            </div>
+        </Router>
     );
 }
 
