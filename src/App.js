@@ -1,3 +1,5 @@
+import './App.css';
+import 'remixicon/fonts/remixicon.css'
 import Home from "./views/Home";
 import About from "./views/About";
 import Educatied from "./views/Educatied";
