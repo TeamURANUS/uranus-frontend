@@ -58,7 +58,7 @@ class Educatied extends Component {
         return (
             <div className="flex">
                 <MainMenu activeMenuChange={this.changeMainMenu} activeMenu={this.state.activeMainMenu}/>
-                <div className="w-full">
+                <div className="w-full ml-[180px]">
                     <TopMenu path={this.state.path}/>
                     <div className="flex">
                         <div>
@@ -73,7 +73,7 @@ class Educatied extends Component {
                                             : ""
                             }
                         </div>
-                        <Content/>
+                        <Content active={this.state.activeMainMenu} className="w-full"/>
                     </div>
                 </div>
             </div>
