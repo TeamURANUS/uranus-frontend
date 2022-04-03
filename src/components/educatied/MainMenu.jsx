@@ -4,8 +4,7 @@ class MainMenu extends Component {
     render() {
         return (
             <div
-                className="w-180 min-w-[180px] max-w-[180px] bg-blue p-2 !h-screen border-r-gray-300 border cursor-default fixed select-none">
-                <p className="w-full text-center text-2xl font-bold mt-2 mb-9">Educatied</p>
+                className="bg-white mt-[4rem] w-180 min-w-[180px] max-w-[180px] bg-blue p-2 !h-screen border-r-gray-300 border cursor-default fixed select-none">
                 <ul className="">
                     <li className={this.props.activeMenu === 1 ? "bg-blue-700 flex items-center p-1 py-2 text-white rounded-sm" : "flex items-center p-1 py-2 hover:bg-blue-700 hover:text-white rounded-sm"}
                         onClick={() => this.props.activeMenuChange(1)}>

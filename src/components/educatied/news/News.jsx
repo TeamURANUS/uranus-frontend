@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 
 class News extends Component {
     render() {
-        return (<li className="flex mb-2 border-b border-b-gray-200 pb-2 w-full">
+        return (<li className="flex mb-2 border-b border-b-gray-200 pb-2 w-full" onClick={() => {
+            this.props.onClick(this.props.id);
+        }}>
             <img src={this.props.image} alt="img"
                  className="object-cover w-52 h-43 min-w-52 max-w-52 min-h-[9rem] max-h-43 rounded"/>
             <div className="flex flex-col ml-4 h-full">
