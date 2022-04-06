@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import News from "./news/News";
 import NewsContent from "./news/NewsContent";
+import {Calendar} from "antd";
+import ClassContent from "./home/ClassContent";
 
 class Content extends Component {
     constructor(props) {
@@ -32,10 +34,16 @@ class Content extends Component {
 
     render() {
         return (
-            <div className="mt-[4rem]">
+            <div className="mt-[5rem]">
                 {this.props.active === 1 ?
-                    "posts"
-                    : this.props.active === 2 ? "calendar"
+                    <ClassContent
+                        activeGroup={this.props.activeGroupType}
+                        activeGroupIndex={this.props.activeGroupIndex}
+                        user={this.props.user}
+                        classes={this.props.classes}
+                        communities={this.props.communities}
+                    />
+                    : this.props.active === 2 ? <Calendar/>
                         : this.props.active === 3 ?
                             <div>
                                 {this.props.newsOpen ?
