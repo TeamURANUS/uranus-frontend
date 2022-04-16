@@ -24,3 +24,16 @@ export const getPostsByGroupId = async (groupId) => {
         return error.response;
     });
 };
+
+
+export const getCommentById = async (commentId) => {
+    return await axios({
+        method: 'get',
+        url: backendUrl + '/api/comments/' + commentId
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+

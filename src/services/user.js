@@ -14,6 +14,18 @@ export const getUserById = async (userid) => {
 };
 
 
+export const getAllUsers = async () => {
+    return await axios({
+        method: 'get',
+        url: backendUrl + '/api/users'
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+
 export const getUserByEmail = async (email) => {
     return await axios({
         method: 'post',
@@ -49,3 +61,5 @@ export const addUser = async (user) => {
         return error.response;
     });
 };
+
+
