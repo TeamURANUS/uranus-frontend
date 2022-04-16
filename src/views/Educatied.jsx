@@ -6,6 +6,8 @@ import TopMenu from "../components/educatied/TopMenu";
 import Content from "../components/educatied/Content";
 import EmailVerification from "../components/authentication/EmailVerification";
 import ExtraInformation from "../components/authentication/ExtraInformation";
+import {getGroupsByUser, getPostsByGroupId} from "../services/groups";
+import {getAllUsers} from "../services/user";
 
 class Educatied extends Component {
     constructor(props) {
@@ -20,12 +22,69 @@ class Educatied extends Component {
             register: false,
             openMenu: false,
             classes: [],
-            communities: []
+            communities: [],
+            posts: [],
+            createPost: false,
+            readPost: false,
+            readPostIndex: -1,
+            users: []
         };
     }
 
-    componentDidMount() {
+    toDateTime = (secs) => {
+        const t = new Date(1970, 0, 1); // Epoch
+        t.setSeconds(secs);
+        return t.toLocaleString("en-GB").replace(",", "");
+    };
+
+    clearHomeState = () => {
+        this.setState({
+            activeGroupType: "class",
+            activeGroupIndex: -1,
+            classes: [],
+            communities: [],
+            posts: [],
+            allPosts: [],
+            createPost: false,
+            readPost: false,
+            readPostIndex: -1
+        });
+        window.localStorage.setItem('state', JSON.stringify(this.state));
+    };
+
+    clearGroupState = () => {
+        this.setState({
+            posts: [],
+            createPost: false,
+            readPost: false,
+            readPostIndex: -1
+        });
+        window.localStorage.setItem('state', JSON.stringify(this.state));
+    };
+
+    async componentDidMount() {
         document.title = "Educatied - Home";
+        this.setState({
+            activeGroupType: "class",
+            activeGroupIndex: -1,
+            classes: [],
+            communities: [],
+            posts: [],
+            allPosts: [],
+            createPost: false,
+            readPost: false,
+            readPostIndex: -1
+        });
+        const users = await getAllUsers();
+        console.log(users);
+        this.setState({
+            users: users.data.data.map(x => ({
+                id: x.id,
+                name: x.userName + " " + x.userLastname
+            }))
+        });
+
+        window.localStorage.setItem('state', JSON.stringify(this.state));
     }
 
     changeMainMenu = (newMenu) => {
@@ -46,24 +105,87 @@ class Educatied extends Component {
             document.title = "Educatied - Settings";
             this.setState({path: ["Settings"], newsOpen: false});
         }
+        this.clearHomeState();
         window.localStorage.setItem('state', JSON.stringify(this.state));
     };
 
-    changeGroupType = (groupType) => {
-        console.log(groupType);
-        this.setState({activeGroupType: groupType});
-        this.setState({activeGroupIndex: 0});
+    changeGroupType = async (groupType) => {
+        this.clearGroupState();
+        this.setState({
+            activeGroupType: groupType,
+            activeGroupIndex: -1,
+            posts: [],
+            allPosts: [],
+            readPost: false,
+            createPost: false
+        });
+        const result = await getGroupsByUser(this.state.user.id);
+        if (result.status === 200) {
+            if (this.state.activeGroup === "class") {
+                this.setClasses(
+                    result.data.filter(x => x[1].groupIsCommunity === false).map(x => (
+                        {
+                            id: x[1].id,
+                            name: x[1].groupName,
+                            role: x[0],
+                            description: x[1].groupDescription,
+                            admin: x[1].groupAdmin._key.path.segments[6].trim(),
+                            assistants: x[1].groupAssistants.map(a => a._key.path.segments[6].trim()),
+                            members: x[1].groupMembers.map(a => a._key.path.segments[6].trim()),
+                            postPermissions: x[1].groupPostPermissions,
+                            privacyPermissions: x[1].groupPrivacyPermissions
+                        }
+                    ))
+                );
+            } else {
+                this.setCommunities(
+                    result.data.filter(x => x[1].groupIsCommunity === true).map(x => (
+                        {
+                            id: x[1].id,
+                            name: x[1].groupName,
+                            role: x[0],
+                            description: x[1].groupDescription,
+                            admin: x[1].groupAdmin._key.path.segments[6].trim(),
+                            assistants: x[1].groupAssistants.map(a => a._key.path.segments[6].trim()),
+                            members: x[1].groupMembers.map(a => a._key.path.segments[6].trim()),
+                            postPermissions: x[1].groupPostPermissions,
+                            privacyPermissions: x[1].groupPrivacyPermissions
+                        }
+                    ))
+                );
+            }
+        }
+
         window.localStorage.setItem('state', JSON.stringify(this.state));
     };
 
-    changeGroupIndex = (index) => {
-        console.log(index);
+    changeGroupIndex = async (index) => {
+        this.clearGroupState();
+        console.log("GROUP", this.state.activeGroupType, "INDEX", index);
         this.setState({activeGroupIndex: index});
+        let posts;
+        if (this.state.activeGroupType === "class") {
+            posts = await getPostsByGroupId(this.state.classes[index].id);
+        } else {
+            posts = await getPostsByGroupId(this.state.communities[index].id);
+        }
+        posts = posts.data.map(x => ({
+            id: x.id,
+            date: this.toDateTime(x.postDate.seconds),
+            title: x.postTitle,
+            text: x.postContent,
+            avatar: "https://joeschmoe.io/api/v1/17",
+            author: x.postAuthor._key.path.segments[6],
+            isAdmin: x.postSentByAdmin,
+            comments: x.postComments.map(a => a._key.path.segments[6])
+        }));
+        this.setState({
+            allPosts: posts, posts: posts
+        });
         window.localStorage.setItem('state', JSON.stringify(this.state));
     };
 
     openNewsWithId = (id) => {
-        console.log(id);
         this.setState({newsOpen: true});
         window.localStorage.setItem('state', JSON.stringify(this.state));
     };
@@ -85,7 +207,7 @@ class Educatied extends Component {
 
     logout = () => {
         this.setState({user: null});
-        window.localStorage.setItem('state', JSON.stringify(this.state));
+        window.localStorage.removeItem('state');
     };
 
     setClasses = (classes) => {
@@ -95,6 +217,23 @@ class Educatied extends Component {
     setCommunities = (communities) => {
         this.setState({communities: communities});
     };
+
+    setReadPost = (isRead, index) => {
+        console.log("READ POST", this.state.activeGroupType, this.state.activeGroupIndex);
+        this.setState({readPost: isRead, readPostIndex: index});
+    };
+
+    search = (query) => {
+        this.setState({
+            posts: this.state.allPosts.filter(x => x.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
+                || x.text.toLocaleLowerCase().includes(query.toLocaleLowerCase())
+                || x.author.toLocaleLowerCase().includes(query.toLocaleLowerCase()))
+        });
+    };
+
+    setCreatePost = (value) => {
+        this.setState({createPost: value})
+    }
 
     render() {
         return (
@@ -134,6 +273,14 @@ class Educatied extends Component {
                                             user={this.state.user}
                                             classes={this.state.classes}
                                             communities={this.state.communities}
+                                            posts={this.state.posts}
+                                            createPost={this.state.createPost}
+                                            readPost={this.state.readPost}
+                                            readPostIndex={this.state.readPostIndex}
+                                            setReadPost={this.setReadPost}
+                                            search={this.search}
+                                            users={this.state.users}
+                                            setCreatePost={this.setCreatePost}
                                         />
                                     </div>
                                 </div>
