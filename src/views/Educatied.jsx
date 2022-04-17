@@ -119,7 +119,6 @@ class Educatied extends Component {
         });
         const result = await getGroupsByUser(this.state.user.id);
         if (result.status === 200) {
-            console.log("GROUPSSSS", result);
             if (this.state.activeGroup === "class") {
                 this.setClasses(
                     result.data.filter(x => x[1].groupIsCommunity === false).map(x => (
@@ -162,7 +161,7 @@ class Educatied extends Component {
 
     changeGroupIndex = async (index) => {
         this.clearGroupState();
-        if(index !== -1) {
+        if (index !== -1) {
             console.log("GROUP", this.state.activeGroupType, "INDEX", index);
             this.setState({activeGroupIndex: index});
             let posts;
@@ -187,6 +186,7 @@ class Educatied extends Component {
         }
         window.localStorage.setItem('state', JSON.stringify(this.state));
     };
+
 
     reGetPosts = async () => {
         let posts;
@@ -261,6 +261,10 @@ class Educatied extends Component {
         this.setState({createPost: value});
     };
 
+    setStateData = (data) => {
+        this.setState(data);
+    };
+
     render() {
         return (
             <div>
@@ -309,6 +313,9 @@ class Educatied extends Component {
                                             users={this.state.users}
                                             setCreatePost={this.setCreatePost}
                                             reGetPosts={this.reGetPosts}
+                                            setClasses={this.setClasses}
+                                            setCommunities={this.setCommunities}
+                                            setStateData={this.setStateData}
                                         />
                                     </div>
                                 </div>

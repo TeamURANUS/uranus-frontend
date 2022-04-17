@@ -12,7 +12,8 @@ class GroupContent extends Component {
         super(props);
         this.state = {
             modal: false,
-            createModal: false
+            createModal: false,
+            leaveModal: false
         };
     }
 
@@ -39,15 +40,25 @@ class GroupContent extends Component {
         const postID = postResult.data.message.replace("Post added successfully! ", "").trim();
         const postIdList = activeGroup.posts;
         postIdList.push(postID);
-        const updateGroupResult = await updateGroupData(activeGroup.id, {groupPosts: postIdList});
         this.setCreatePostScreen(false);
+        const updateGroupResult = await updateGroupData(activeGroup.id, {groupPosts: postIdList});
         this.props.reGetPost();
         this.setState({createModal: false});
     };
 
-    onLeaveGroup = () => {
+    onLeaveGroup = async () => {
+        this.setState({leaveModal: true, modal: false});
+        this.props.setStateData({activeGroupIndex: -1});
+        if (this.props.activeGroup === "class") {
+            this.props.setClasses(this.props.classes.filter(x => x.id !== group.id));
+        } else {
+            this.props.setCommunities(this.props.classes.filter(x => x.id !== group.id));
+        }
         const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
-        console.log(group);
+        const data = {
+            groupMembers: group.members.filter(x => x !== this.props.user.id)
+        };
+        const result = await updateGroupData(group.id, data);
     };
 
     render() {
@@ -59,6 +70,16 @@ class GroupContent extends Component {
                     footer={null}
                     visible={this.state.createModal}>
                     <p>Please wait to create post</p>
+                </Modal>
+                <Modal
+                    closable={false}
+                    title="Leave Group"
+                    cancelButtonProps={{style: {display: 'none'}}}
+                    onOk={() => {
+                        this.setState({leaveModal: false});
+                    }}
+                    visible={this.state.leaveModal}>
+                    <p>You just leave the group </p>
                 </Modal>
                 {this.props.activeGroupIndex === -1
                     ? <div className="flex flex-col mt-[10%] ml-[20%]">
