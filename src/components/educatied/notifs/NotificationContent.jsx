@@ -8,6 +8,9 @@ const toDateTime = (secs) => {
     return t.toLocaleString("en-GB").replace(",", "");
 };
 
+
+const svgPath = process.env.PUBLIC_URL + '/svg/';
+
 class NotificationContent extends Component {
     constructor(props) {
         super(props);
@@ -46,13 +49,23 @@ class NotificationContent extends Component {
 
     render() {
         return (
-            <div className="my-2 mx-4">
-                <p className="font-bold text-xl my-2">Notifications</p>
-                <ul className="my-4">
-                    {this.state.notifs.map((item, index) => {
-                        return <Notification index={index} key={index} data={item}/>;
-                    })}
-                </ul>
+            <div className="my-4 mx-8 flex w-full">
+                <div className="w-1/2 hidden md:block">
+                    <p className="font-bold text-xl my-2">Notifications</p>
+                    <img
+                        className=" mt-12"
+                        src={`${svgPath}undraw_new_notifications_re_xpcv.svg`}
+                        alt="verify"
+                    />
+                </div>
+                <div>
+                    <p className="md:hidden font-bold text-xl my-2">Notifications</p>
+                    <ul className="my-12 mx-12">
+                        {this.state.notifs.map((item, index) => {
+                            return <Notification index={index} key={index} data={item}/>;
+                        })}
+                    </ul>
+                </div>
             </div>
         );
     }

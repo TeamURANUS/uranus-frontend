@@ -72,7 +72,7 @@ class SubMenu extends Component {
                 : <ul className="cursor-default">
                     {this.props.communities.map((item, index) => {
                         return <Group key={index} data={item} index={index}
-                                      active={this.props.activeGroupIndex === index + 1}
+                                      active={false}
                                       onClick={this.props.activeGroupIndexChange}/>;
                     })}
                     <Group key={-2} data={{name: "New Community"}} index={-2}
