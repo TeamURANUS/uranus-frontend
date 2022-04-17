@@ -3,6 +3,7 @@ import PostList from "./PostList";
 import WritePost from "./WritePost";
 import ReadPost from "./ReadPost";
 import {Modal} from "antd";
+import {createPost, updateGroupData} from "../../../services/groups";
 
 const svgPath = process.env.PUBLIC_URL + '/svg/';
 
@@ -10,7 +11,8 @@ class GroupContent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            modal: false
+            modal: false,
+            createModal: false
         };
     }
 
@@ -18,18 +20,46 @@ class GroupContent extends Component {
 
     }
 
-
-    createNewPost = (title, content) => {
-        console.log(title, content);
+    setCreatePostScreen = (s) => {
+        this.props.setCreatePost(s);
     };
 
-    setCreatePostScreen = (s) => {
-        this.props.setCreatePost(true);
+    onCreatePost = async (title, content) => {
+        this.setState({createModal: true});
+        const activeGroup = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
+        const postData = {
+            postGroupId: activeGroup.id,
+            postAuthor: this.props.user.id,
+            postComments: [],
+            postDate: new Date(),
+            postContent: content,
+            postTitle: title
+        };
+        const postResult = await createPost(postData);
+        const postID = postResult.data.message.replace("Post added successfully! ", "").trim();
+        const postIdList = activeGroup.posts;
+        postIdList.push(postID);
+        const updateGroupResult = await updateGroupData(activeGroup.id, {groupPosts: postIdList});
+        this.setCreatePostScreen(false);
+        this.props.reGetPost();
+        this.setState({createModal: false});
+    };
+
+    onLeaveGroup = () => {
+        const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
+        console.log(group);
     };
 
     render() {
         return (
             <div className="max-h-screen overflow-scroll no-scrollbar">
+                <Modal
+                    closable={false}
+                    title="Post Creating"
+                    footer={null}
+                    visible={this.state.createModal}>
+                    <p>Please wait to create post</p>
+                </Modal>
                 {this.props.activeGroupIndex === -1
                     ? <div className="flex flex-col mt-[10%] ml-[20%]">
                         <img
@@ -44,7 +74,7 @@ class GroupContent extends Component {
                         <div className="flex">
                             <img
                                 className="w-40 rounded-full mr-5"
-                                src="https://images.unsplash.com/photo-1593642532973-d31b6557fa68"
+                                src={'https://source.unsplash.com/random/1080x1080/?education,' + this.props.activeGroupIndex}
                                 alt="class"
                             />
                             <div>
@@ -59,8 +89,9 @@ class GroupContent extends Component {
                             </div>
                         </div>
                         {this.props.createPost
-                            ? <WritePost createNewPost={this.createNewPost}
-                                         setCreatePostScreen={this.props.setCreatePost}/>
+                            ? <WritePost
+                                setCreatePostScreen={this.props.setCreatePost}
+                                onCreatePost={this.onCreatePost}/>
                             : this.props.readPost ? <ReadPost
                                     setReadPost={this.props.setReadPost}
                                     post={this.props.posts[this.props.readPostIndex]}
@@ -70,7 +101,7 @@ class GroupContent extends Component {
                                     <div>
                                         <button
                                             onClick={() => {
-                                                 this.setState({modal: true})
+                                                this.setState({modal: true});
                                             }}
                                             className="border border-sky-500 mr-2 p-2 px-6 rounded mt-5 hover:bg-sky-500 hover:text-white">
                                             Details
@@ -94,25 +125,40 @@ class GroupContent extends Component {
                                         </span>
                                     </div>
                                     <Modal
+                                        closable={false}
+                                        cancelButtonProps={{style: {display: 'none'}}}
                                         title={this.props.activeGroup === "class"
-                                        ? this.props.classes[this.props.activeGroupIndex].name
-                                        : this.props.communities[this.props.activeGroupIndex].name} visible={this.state.modal} onOk={() => {this.setState({modal: false})}}>
-                                        <p><span className="font-bold">Description: </span> {this.props.activeGroup === "class"
+                                            ? this.props.classes[this.props.activeGroupIndex].name
+                                            : this.props.communities[this.props.activeGroupIndex].name}
+                                        visible={this.state.modal} onOk={() => {
+                                        this.setState({modal: false});
+                                    }}
+                                        width={1000}
+                                    >
+                                        <p><span
+                                            className="font-bold">Description: </span> {this.props.activeGroup === "class"
                                             ? this.props.classes[this.props.activeGroupIndex].description
                                             : this.props.communities[this.props.activeGroupIndex].description}</p>
                                         <p className="font-bold">Admin</p>
                                         <p>{this.props.activeGroup === "class"
-                                            ? this.props.users.filter(x=>x.id === this.props.classes[this.props.activeGroupIndex].admin)[0].name
-                                            : this.props.users.filter(x=>x.id === this.props.communities[this.props.activeGroupIndex].admin)[0].name}</p>
+                                            ? this.props.users.filter(x => x.id === this.props.classes[this.props.activeGroupIndex].admin)[0].name
+                                            : this.props.users.filter(x => x.id === this.props.communities[this.props.activeGroupIndex].admin)[0].name}</p>
                                         <p className="font-bold">Assistants</p>
                                         <p>{this.props.activeGroup === "class"
-                                            ? this.props.users.filter(x=> this.props.classes[this.props.activeGroupIndex].assistants.includes(x.id)).map(a=>a.name).join(", ")
-                                            : this.props.users.filter(x=> this.props.communities[this.props.activeGroupIndex].assistants.includes(x.id)).map(a=>a.name).join(", ")}</p>
+                                            ? this.props.users.filter(x => this.props.classes[this.props.activeGroupIndex].assistants.includes(x.id)).map(a => a.name).join(", ")
+                                            : this.props.users.filter(x => this.props.communities[this.props.activeGroupIndex].assistants.includes(x.id)).map(a => a.name).join(", ")}</p>
                                         <p className="font-bold">Members</p>
                                         <p>{this.props.activeGroup === "class"
-                                            ? this.props.users.filter(x=> this.props.classes[this.props.activeGroupIndex].members.includes(x.id)).map(a=>a.name).join(", ")
-                                            : this.props.users.filter(x=> this.props.communities[this.props.activeGroupIndex].members.includes(x.id)).map(a=>a.name).join(", ")}</p>
+                                            ? this.props.users.filter(x => this.props.classes[this.props.activeGroupIndex].members.includes(x.id)).map(a => a.name).join(", ")
+                                            : this.props.users.filter(x => this.props.communities[this.props.activeGroupIndex].members.includes(x.id)).map(a => a.name).join(", ")}</p>
+                                        <button
+                                            onClick={() => {
+                                                this.onLeaveGroup();
+                                            }}
+                                            className="border border-red-500 hover:bg-red-500 hover:text-white px-6 py-1.5 rounded">Leave
+                                        </button>
                                     </Modal>
+
                                     <p className="my-5 text-xl font-bold border-b border-zinc-300 ">Posts</p>
                                     <ul className="">
                                         {this.props.posts.map((item, index) => {

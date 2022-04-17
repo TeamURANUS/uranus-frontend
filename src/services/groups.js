@@ -48,3 +48,39 @@ export const getNotifications = async () => {
     });
 };
 
+export const createPost = async (data) => {
+    return await axios({
+        method: 'post',
+        url: backendUrl + '/api/posts',
+        data: data
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+
+export const updateGroupData = async (groupId, data) => {
+    return await axios({
+        method: 'put',
+        url: backendUrl + '/api/groups/' + groupId,
+        data: data
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+export const getGroups = async () => {
+    return await axios({
+        method: 'get',
+        url: backendUrl + '/api/groups'
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
