@@ -31,6 +31,7 @@ class Content extends Component {
                         search={this.props.search}
                         users={this.props.users}
                         setCreatePost={this.props.setCreatePost}
+                        reGetPost={this.props.reGetPosts}
                     />
                     : this.props.active === 2 ?
                         <CalendarContent

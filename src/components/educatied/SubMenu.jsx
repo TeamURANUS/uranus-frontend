@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
 import Group from "./home/Group";
 
-import {getGroupsByUser} from "../../services/groups";
+import {getGroups, getGroupsByUser, updateGroupData} from "../../services/groups";
+import {Modal} from "antd";
 
 class SubMenu extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            joinModal: false,
+            groupsForJoin: []
+        };
     }
 
-
-    async componentDidMount() {
+    getUserGroups = async () => {
         const result = await getGroupsByUser(this.props.user.id);
         if (result.status === 200) {
             if (this.props.activeGroup === "class") {
@@ -25,7 +28,8 @@ class SubMenu extends Component {
                             assistants: x[1].groupAssistants.map(a => a._key.path.segments[6].trim()),
                             members: x[1].groupMembers.map(a => a._key.path.segments[6].trim()),
                             postPermissions: x[1].groupPostPermissions,
-                            privacyPermissions: x[1].groupPrivacyPermissions
+                            privacyPermissions: x[1].groupPrivacyPermissions,
+                            posts: x[1].groupPosts.map(a => a._key.path.segments[6].trim())
                         }
                     ))
                 );
@@ -41,13 +45,56 @@ class SubMenu extends Component {
                             assistants: x[1].groupAssistants.map(a => a._key.path.segments[6].trim()),
                             members: x[1].groupMembers.map(a => a._key.path.segments[6].trim()),
                             postPermissions: x[1].groupPostPermissions,
-                            privacyPermissions: x[1].groupPrivacyPermissions
+                            privacyPermissions: x[1].groupPrivacyPermissions,
+                            posts: x[1].groupPosts.map(a => a._key.path.segments[6].trim())
                         }
                     ))
                 );
             }
         }
+    };
+
+
+    async componentDidMount() {
+        await this.getUserGroups();
     }
+
+    joinNewGroup = async (index) => {
+        console.log(index);
+        const data = {
+            groupMembers: [...this.state.groupsForJoin[index].members, this.props.user.id]
+        };
+        console.log(data);
+        const result = await updateGroupData(this.state.groupsForJoin[index].id, data);
+        console.log(result);
+        await this.getUserGroups();
+        this.setState({joinModal: false});
+    };
+
+    openModal = async () => {
+        this.setState({joinModal: true});
+        let groups = await getGroups();
+        console.log(groups.data.data);
+        groups = groups.data.data.filter(x => this.props.activeGroup === "class" ? x.groupIsCommunity === false : x.groupIsCommunity)
+            .map(x => (
+                {
+                    id: x.id,
+                    name: x.groupName,
+                    role: "member",
+                    description: x.groupDescription,
+                    admin: x.groupAdmin._key.path.segments[6].trim(),
+                    assistants: x.groupAssistants.map(a => a._key.path.segments[6].trim()),
+                    members: x.groupMembers.map(a => a._key.path.segments[6].trim()),
+                    postPermissions: x.groupPostPermissions,
+                    privacyPermissions: x.groupPrivacyPermissions,
+                    posts: x.groupPosts.map(a => a._key.path.segments[6].trim())
+                }
+            ));
+        groups = groups.filter(x => this.props.activeGroup === "class"
+            ? !this.props.classes.map(a => a.id).includes(x.id) : !this.props.communities.map(a => a.id).includes(x.id));
+        console.log(groups);
+        this.setState({groupsForJoin: groups});
+    };
 
     render() {
         return (<div className="mt-[5rem] w-180 min-w-[240px] h-screen max-w-[280px] bg-blue p-2 drop-shadow-right">
@@ -66,8 +113,16 @@ class SubMenu extends Component {
                                       active={this.props.activeGroupIndex === index + 1}
                                       onClick={this.props.activeGroupIndexChange}/>;
                     })}
-                    <Group key={-2} data={{name: "New Class"}} index={-2}
-                           onClick={null}/>
+                    <li className=
+                            "flex items-center my-2 p-1 py-2 hover:bg-sky-400 hover:text-white rounded-sm border-b border-b-gray-300"
+                        onClick={() => {
+                            this.openModal();
+                        }}
+                    >
+                        <i className="ri-add-line text-black-500 inline-block !text-xl px-1"
+                        />
+                        <span className="text-md pl-2">New Class</span>
+                    </li>
                 </ul>
                 : <ul className="cursor-default">
                     {this.props.communities.map((item, index) => {
@@ -75,9 +130,32 @@ class SubMenu extends Component {
                                       active={false}
                                       onClick={this.props.activeGroupIndexChange}/>;
                     })}
-                    <Group key={-2} data={{name: "New Community"}} index={-2}
-                           onClick={null}/>
+                    <li className=
+                            "flex items-center my-2 p-1 py-2 hover:bg-sky-400 hover:text-white rounded-sm border-b border-b-gray-300"
+                        onClick={() => {
+                            this.openModal();
+                        }}
+                    >
+                        <i className="ri-add-line text-black-500 inline-block !text-xl px-1"
+                        />
+                        <span className="text-md pl-2">New Community</span>
+                    </li>
                 </ul>}
+            <Modal
+                closable={false}
+                cancelButtonProps={{style: {display: 'none'}}}
+                title={this.props.activeGroup === "class"
+                    ? "Join New Class"
+                    : "Join New Community"}
+                visible={this.state.joinModal} onOk={() => {
+                this.setState({joinModal: false});
+            }}>
+                {this.state.groupsForJoin.map((item, index) => {
+                    return <li key={index} onClick={() => this.joinNewGroup(index)}
+                               className="border-b border-zinc-2oo py-2 px-2 hover:text-white hover:bg-sky-500 cursor-pointer"
+                    >{item.name}</li>;
+                })}
+            </Modal>
         </div>);
     }
 }

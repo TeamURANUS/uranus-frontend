@@ -10,7 +10,7 @@ class Group extends Component {
                     this.props.onClick(this.props.index);
                 }}
             >
-                <i className="ri-stop-mini-line text-black-500 inline-block !text-xl px-1"
+                <i className="ri-checkbox-blank-circle-fill text-black-500 inline-block  px-1"
                 />
                 <span className="text-md pl-2">{this.props.data.name}</span>
             </li>
