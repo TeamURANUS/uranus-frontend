@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost:8081";
+const backendUrl = "http://localhost:3030";
 
 export const register = async (email, password) => {
     return await axios({

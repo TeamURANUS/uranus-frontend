@@ -13,7 +13,7 @@ class PostList extends Component {
                 <p className="">
                     <img
                         className="w-[24px] rounded-full inline-block"
-                        src={"https://joeschmoe.io/api/v1/" + this.props.user.id}
+                        src={this.props.user.image}
                         alt="avatar"
                     />
                     <span className="ml-2 text-xs font-bold text-zinc-500"><span>{this.props.data.isAdmin ? "(Admin) ": ""}</span>{this.props.user.name}</span>
