@@ -18,7 +18,7 @@ const ReadPost = (props) => {
 
 
     return (
-        <div className="mt-10">
+        <div className="mt-10 md:min-w-[900px]">
             <button className="px-8 mb-3 py-2 border border-sky-500 rounded hover:text-white hover:bg-sky-500"
                     onClick={() => {
                         props.setReadPost(false, 0);

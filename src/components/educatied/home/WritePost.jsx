@@ -10,7 +10,7 @@ const WritePost = (props) => {
     const [content, setContent] = useState("");
 
     return (
-        <Form>
+        <Form className="md:min-w-[900px]">
             <p className="text-xl font-bold mt-7">Create New Post</p>
             <div className="my-5">
                 <span className="text-gray-500">Title</span>
@@ -30,10 +30,9 @@ const WritePost = (props) => {
                           }}/>
             </div>
             <Button type="primary" onClick={() => {
-                props.createNewPost(title, content);
+                props.onCreatePost(title,content)
             }}>Submit Post</Button>
             <Button type="secondary" className="ml-5" onClick={() => {
-                console.log(props);
                 props.setCreatePostScreen(false);
             }}>Cancel Post</Button>
         </Form>
