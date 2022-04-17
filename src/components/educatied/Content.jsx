@@ -3,6 +3,7 @@ import News from "./news/News";
 import NewsContent from "./news/NewsContent";
 import {Calendar} from "antd";
 import GroupContent from "./home/GroupContent";
+import NotificationContent from "./notifs/NotificationContent";
 
 class Content extends Component {
     constructor(props) {
@@ -88,7 +89,12 @@ class Content extends Component {
                                     </div>
                                 }
                             </div>
-                            : this.props.active === 4 ? "notifs"
+                            : this.props.active === 4
+                                ? <NotificationContent
+                                user={this.props.user}
+                                classes={this.props.classes}
+                                communities={this.props.communities}
+                                />
                                 : "settings"
                 }
             </div>

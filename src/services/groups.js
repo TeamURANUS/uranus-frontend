@@ -37,3 +37,14 @@ export const getCommentById = async (commentId) => {
     });
 };
 
+export const getNotifications = async () => {
+    return await axios({
+        method: 'get',
+        url: backendUrl + '/api/notifications'
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
