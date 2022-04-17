@@ -65,7 +65,7 @@ class Educatied extends Component {
     async componentDidMount() {
         document.title = "Educatied - Home";
         this.setState({
-            activeGroupType: "class",
+            activeMainMenu: 1,
             activeGroupIndex: -1,
             classes: [],
             communities: [],
@@ -76,7 +76,6 @@ class Educatied extends Component {
             readPostIndex: -1
         });
         const users = await getAllUsers();
-        console.log(users);
         this.setState({
             users: users.data.data.map(x => ({
                 id: x.id,
@@ -105,7 +104,6 @@ class Educatied extends Component {
             document.title = "Educatied - Settings";
             this.setState({path: ["Settings"], newsOpen: false});
         }
-        this.clearHomeState();
         window.localStorage.setItem('state', JSON.stringify(this.state));
     };
 
@@ -174,7 +172,7 @@ class Educatied extends Component {
             date: this.toDateTime(x.postDate.seconds),
             title: x.postTitle,
             text: x.postContent,
-            avatar: "https://joeschmoe.io/api/v1/17",
+            avatar: "https://joeschmoe.io/api/v1/",
             author: x.postAuthor._key.path.segments[6],
             isAdmin: x.postSentByAdmin,
             comments: x.postComments.map(a => a._key.path.segments[6])

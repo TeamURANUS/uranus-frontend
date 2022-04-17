@@ -29,7 +29,7 @@ const ReadPost = (props) => {
             <Comment
                 className="text-xl"
                 author={<a className="text-xs font-bold">{user.name}</a>}
-                avatar={<Avatar src={"https://joeschmoe.io/api/v1/16" + user.id}/>}
+                avatar={<Avatar src={"https://joeschmoe.io/api/v1/" + user.id}/>}
                 content={
                     <p className="max-w-[1400px] text-lg">
                         {props.post.text}

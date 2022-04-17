@@ -32,7 +32,7 @@ const ReadComment = (props) => {
     return (
         <Comment
             author={<a>{user.name}</a>}
-            avatar={<Avatar src={"https://joeschmoe.io/api/v1/16" + user.id} alt="avatar"/>}
+            avatar={<Avatar src={"https://joeschmoe.io/api/v1/" + user.id} alt="avatar"/>}
             content={
                 <p>
                     {comment.commentContent}
