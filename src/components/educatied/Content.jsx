@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import News from "./news/News";
 import NewsContent from "./news/NewsContent";
+import {Calendar} from "antd";
+import GroupContent from "./home/GroupContent";
 
 class Content extends Component {
     constructor(props) {
@@ -32,10 +34,24 @@ class Content extends Component {
 
     render() {
         return (
-            <div className="mt-[4rem]">
+            <div className="mt-[5rem]">
                 {this.props.active === 1 ?
-                    "posts"
-                    : this.props.active === 2 ? "calendar"
+                    <GroupContent
+                        activeGroup={this.props.activeGroup}
+                        activeGroupIndex={this.props.activeGroupIndex}
+                        user={this.props.user}
+                        classes={this.props.classes}
+                        communities={this.props.communities}
+                        posts={this.props.posts}
+                        createPost={this.props.createPost}
+                        readPost={this.props.readPost}
+                        readPostIndex={this.props.readPostIndex}
+                        setReadPost={this.props.setReadPost}
+                        search={this.props.search}
+                        users={this.props.users}
+                        setCreatePost={this.props.setCreatePost}
+                    />
+                    : this.props.active === 2 ? <Calendar/>
                         : this.props.active === 3 ?
                             <div>
                                 {this.props.newsOpen ?
@@ -56,6 +72,7 @@ class Content extends Component {
                                     <div>
                                         <p className="font-bold text-2xl ml-5 mt-5">News</p>
                                         <ul className="ml-5 mr-3 select-none">
+
                                             <News
                                                 image={"https://source.unsplash.com/random/1920x1080/?wallpaper,landscape," + Math.random()}
                                                 title="Lorem Ipsum dolar sit amet"
@@ -67,7 +84,6 @@ class Content extends Component {
                                                 }}
                                                 id="123"
                                             />
-
                                         </ul>
                                     </div>
                                 }
