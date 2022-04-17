@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 
+
+const imagePath = process.env.PUBLIC_URL;
+
 class Home extends Component {
 
     componentDidMount() {
@@ -15,7 +18,7 @@ class Home extends Component {
                         <span className="ml-3 text-3xl">Educatied</span>
                     </a>
                     <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-                        <Link to="/about" className="mr-5 text-gray-900">About</Link>
+                        <Link to="/about" className="mr-5 text-gray-900"></Link>
                     </nav>
                     <Link to="/educatied"
                           className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0 text-gray-900">
@@ -32,9 +35,8 @@ class Home extends Component {
                         <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
                             Join students in one platform
                         </h1>
-                        <p className="mb-8 leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipisicing
-                            elit. Corporis, culpa, cumque dolore eos explicabo, itaque laboriosam minima nam quaerat
-                            quo repellendus sapiente similique. Assumenda debitis harum labore nihil non quibusdam!
+                        <p className="mb-8 leading-relaxed">As a student or a lecturer, we are all here. Where are you?
+                            Easily join us!
                         </p>
                         <p className="text-sm mt-2 text-gray-500 mb-8 w-full">Find us in mobile platforms</p>
                         <div className="flex lg:flex-row md:flex-col">
@@ -66,53 +68,11 @@ class Home extends Component {
                             </button>
                         </div>
                     </div>
-                    <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-                        <img className="object-cover object-center rounded" alt="hero"
-                             src="https://dummyimage.com/720x600"/>
-                    </div>
-                </div>
-            </section>
-
-            <section className="text-gray-600 body-font">
-                <div className="container px-5 py-24 mx-auto">
-                    <div className="flex flex-col text-center w-full mb-20">
-                        <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Lorem Ipsum
-                            Dolar
-                            Sit Amet</h1>
-                        <p className="lg:w-2/3 mx-auto leading-relaxed text-base">Whatever cardigan tote bag tumblr
-                            hexagon brooklyn asymmetrical gentrify, subway tile poke farm-to-table. Franzen you
-                            probably haven't heard of them man bun deep jianbing selfies heirloom prism food truck
-                            ugh squid celiac humblebrag.</p>
-                    </div>
-                    <div className="flex flex-wrap -m-4 text-center">
-                        <div className="p-4 md:w-1/4 sm:w-1/2 w-full">
-                            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg">
-                                <i className="ri-code-fill text-indigo-500 w-12 h-12 mb-3 inline-block text-5xl"/>
-                                <h2 className="title-font font-medium text-3xl text-gray-900">0</h2>
-                                <p className="leading-relaxed">Feature 1</p>
-                            </div>
-                        </div>
-                        <div className="p-4 md:w-1/4 sm:w-1/2 w-full">
-                            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg">
-                                <i className="ri-code-fill text-indigo-500 w-12 h-12 mb-3 inline-block text-5xl"/>
-                                <h2 className="title-font font-medium text-3xl text-gray-900">0</h2>
-                                <p className="leading-relaxed">Feature 2</p>
-                            </div>
-                        </div>
-                        <div className="p-4 md:w-1/4 sm:w-1/2 w-full">
-                            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg">
-                                <i className="ri-code-fill text-indigo-500 w-12 h-12 mb-3 inline-block text-5xl"/>
-                                <h2 className="title-font font-medium text-3xl text-gray-900">0</h2>
-                                <p className="leading-relaxed">Feature 3</p>
-                            </div>
-                        </div>
-                        <div className="p-4 md:w-1/4 sm:w-1/2 w-full">
-                            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg">
-                                <i className="ri-code-fill text-indigo-500 w-12 h-12 mb-3 inline-block text-5xl"/>
-                                <h2 className="title-font font-medium text-3xl text-gray-900">0</h2>
-                                <p className="leading-relaxed">Feature 4</p>
-                            </div>
-                        </div>
+                    <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 flex">
+                        <img className="object-cover object-center rounded h-[400px] mx-20 drop-shadow-xl" alt="hero"
+                             src={`${imagePath}/dummy_screen.png`}/>
+                        <img className="object-cover object-center rounded h-[400px] mx-2 drop-shadow-xl" alt="hero"
+                             src={`${imagePath}/dummy_screen_2.png`}/>
                     </div>
                 </div>
             </section>
