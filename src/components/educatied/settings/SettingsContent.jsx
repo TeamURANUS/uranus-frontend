@@ -1,5 +1,7 @@
-import React, {Component} from 'react';
+import React, {Component, useContext} from 'react';
 import {Avatar} from "antd";
+import {GoogleLogin} from 'react-google-login';
+import {signInWithGoogle} from "../../../services/firebase";
 
 
 const settingsField = (title, content) => {
@@ -42,13 +44,18 @@ class SettingsContent extends Component {
                 {settingsField("University", this.props.user.university)}
                 <div className="grid grid-cols-2 w-full rounded mt-10 p-3.5 h-full">
                     <button
+                        onClick={signInWithGoogle}
                         className="shadow-2xl m-10 text-3xl bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                         Add Google Account
                     </button>
                     <button
+                        onClick={() => {
+                            this.props.logout();
+                        }}
                         className="shadow-2xl m-10 text-3xl bg-red-600 hover:bg-red-800 text-white font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                         Logout
                     </button>
+
                 </div>
 
 
