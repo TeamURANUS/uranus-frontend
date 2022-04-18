@@ -1,6 +1,6 @@
 import {Comment, Avatar, Form, Button, List, Input} from 'antd';
 import React from "react";
-import {createComment, updateGroupData} from "../../../services/groups";
+import {createComment, updatePostData} from "../../../services/groups";
 
 const {TextArea} = Input;
 
@@ -66,13 +66,14 @@ class WriteComment extends React.Component {
             commentContent: this.state.value,
             commentDate: new Date(),
         };
-        console.log(data);
-        const result = await createComment(this.props.post.id, data);
-        console.log(result);
-        // const updateData = {
-        //     postComments: [...this.props.post.comments,
-        // };
-        // await updateGroupData(group.id, updateData);
+        let result = await createComment(data);
+        result = result.data.message.replace("comment created ", "").trim();
+        const updateData = {
+            postComments: [...this.props.post.comments, result]
+        };
+        this.props.post.comments.push(result);
+        console.log(updateData);
+        await updatePostData(this.props.post.id, updateData);
     };
 
     handleChange = e => {
