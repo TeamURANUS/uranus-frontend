@@ -3,19 +3,19 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyBBh7ETt1sqDPwyZ9REvZ15_qElYNMxjGw",
+    apiKey: "",
 
-    authDomain: "educatied-7e9ca.firebaseapp.com",
+    authDomain: "",
 
-    projectId: "educatied-7e9ca",
+    projectId: "",
 
-    storageBucket: "educatied-7e9ca.appspot.com",
+    storageBucket: "",
 
-    messagingSenderId: "641761728473",
+    messagingSenderId: "",
 
-    appId: "1:641761728473:web:257d82a8bc18008c62abc8",
+    appId: "",
 
-    measurementId: "G-7HJ77YP7LN"
+    measurementId: ""
 
 };
 
