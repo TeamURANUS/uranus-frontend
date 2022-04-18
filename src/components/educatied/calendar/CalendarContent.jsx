@@ -21,7 +21,6 @@ class CalendarContent extends Component {
 
     async componentDidMount() {
         let result = await getUserEvents(this.props.user.id);
-        console.log(result);
         result = result.data.map(x => ({
             id: x.id,
             capacity: x.eventCapacity,
@@ -34,7 +33,6 @@ class CalendarContent extends Component {
             organizerID: x.eventOrganizers[0]._key.path.segments[6],
             date: toDateTime(x.eventDate.seconds)
         }));
-        console.log(result);
         this.setState({allEvents: result});
         this.setState({events: result.filter(x => x.date === this.state.activeDate.toString().substring(0, 15))});
     }

@@ -24,7 +24,6 @@ class SigninSignup extends Component {
 
 
     login = async (email, password) => {
-        console.log(email, password);
         const res = await login(email, password);
         if (res.status === 200) {
             const dbUser = await getUserByEmail(res.data.data.email);
@@ -48,9 +47,7 @@ class SigninSignup extends Component {
     };
 
     register = async (email, password) => {
-        console.log(email, password);
         const res = await register(email, password);
-        console.log(res);
         if (res.status === 201) {
             const user = {
                 email: res.data.data.email,
@@ -65,7 +62,6 @@ class SigninSignup extends Component {
                 othermail: "",
                 image: ""
             };
-            console.log(user);
             this.props.setUser(res.data.data, true);
         } else {
             this.setState({registerError: res.data.message.replace("Firebase:", "").replace("auth/", "").replace(".", "")});

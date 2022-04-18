@@ -74,7 +74,6 @@ class SubMenu extends Component {
     openModal = async () => {
         this.setState({joinModal: true});
         let groups = await getGroups();
-        console.log(groups.data.data);
         groups = groups.data.data.filter(x => this.props.activeGroup === "class" ? x.groupIsCommunity === false : x.groupIsCommunity)
             .map(x => (
                 {
@@ -92,7 +91,6 @@ class SubMenu extends Component {
             ));
         groups = groups.filter(x => this.props.activeGroup === "class"
             ? !this.props.classes.map(a => a.id).includes(x.id) : !this.props.communities.map(a => a.id).includes(x.id));
-        console.log(groups);
         this.setState({groupsForJoin: groups});
     };
 

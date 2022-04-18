@@ -25,7 +25,6 @@ const ReadComment = (props) => {
     useEffect(async () => {
         const comment = await getCommentById(props.id);
         setComment(comment.data.data);
-        console.log(comment);
         setUser(props.users.filter(x => x.id === comment.data.data.commentAuthor._key.path.segments[6])[0]);
     }, [props.id]);
 

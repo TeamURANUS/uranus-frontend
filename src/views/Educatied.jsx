@@ -162,7 +162,6 @@ class Educatied extends Component {
     changeGroupIndex = async (index) => {
         this.clearGroupState();
         if (index !== -1) {
-            console.log("GROUP", this.state.activeGroupType, "INDEX", index);
             this.setState({activeGroupIndex: index});
             let posts;
             if (this.state.activeGroupType === "class") {
@@ -245,7 +244,6 @@ class Educatied extends Component {
     };
 
     setReadPost = (isRead, index) => {
-        console.log("READ POST", this.state.activeGroupType, this.state.activeGroupIndex);
         this.setState({readPost: isRead, readPostIndex: index});
     };
 
