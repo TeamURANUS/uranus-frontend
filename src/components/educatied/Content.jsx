@@ -48,7 +48,7 @@ class Content extends Component {
                                     classes={this.props.classes}
                                     communities={this.props.communities}
                                 />
-                                : "settings"
+                                : <SettingsContent user={this.props.user} logout={this.props.logout}/>
                 }
             </div>
         );
