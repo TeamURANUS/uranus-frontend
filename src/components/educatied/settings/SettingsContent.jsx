@@ -45,7 +45,7 @@ class SettingsContent extends Component {
                 <div className="flex w-full rounded mt-5  h-full">
                     <button
                         onClick={signInWithGoogle}
-                        className="min-w-[280px] border bg-sky-600 text-white hover:bg-sky-500 py-2 px-8  rounded mx-6 my-4 w-full items-center flex justify-items-center"
+                        className="min-w-[280px] border bg-sky-600 text-white hover:bg-sky-500 py-2 px-8  rounded mx-6 my-8 w-full items-center flex justify-items-center"
                     >
                         <i className="ri-google-fill mx-2"/>
                         <span> Add Google Account </span>
@@ -54,12 +54,12 @@ class SettingsContent extends Component {
                         onClick={() => {
                             this.props.logout();
                         }}
-                        className="min-w-[280px] border bg-red-600 text-white hover:bg-red-500 py-2 px-8 my-4 rounded mx-6 w-full">
+                        className="min-w-[280px] border bg-red-600 text-white hover:bg-red-500 py-2 px-8 my-8 rounded mx-6 w-full">
                         Logout
                     </button>
                     <a
                         href="mailto:teamuranusproject@gmail.com"
-                        className="block text-black text-center flex items-center justify-items-center pt-4 min-w-[280px] border border-green-500 hover:text-white hover:bg-green-500 py-2 px-8 my-4 rounded mx-6 w-full">
+                        className="block text-black text-center flex items-center justify-items-center pt-4 min-w-[280px]  border border-green-500 hover:text-white hover:bg-green-500 py-2 px-8 my-8 rounded mx-6 w-full">
                         Mail Us For Requests
                     </a>
 

@@ -1,21 +1,22 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import {initializeApp} from "firebase/app";
+import {getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
+import config from './conf.js';
 
 const firebaseConfig = {
 
-    apiKey: "",
+    apiKey: config.apiKey,
 
-    authDomain: "",
+    authDomain: config.authDomain,
 
-    projectId: "",
+    projectId: config.projectId,
 
-    storageBucket: "",
+    storageBucket: config.storageBucket,
 
-    messagingSenderId: "",
+    messagingSenderId: config.messagingSenderId,
 
-    appId: "",
+    appId: config.appId,
 
-    measurementId: ""
+    measurementId: config.measurementId
 
 };
 
@@ -24,7 +25,7 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: 'select_account' });
+provider.setCustomParameters({prompt: 'select_account'});
 
 
 const auth = getAuth();
