@@ -1,6 +1,7 @@
 import axios from "axios";
+import config from './conf.js';
 
-const backendUrl = "http://localhost:3030";
+const backendUrl = `http://${config.backend}:8081`;
 
 export const register = async (email, password) => {
     return await axios({
