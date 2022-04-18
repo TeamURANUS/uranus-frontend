@@ -1,21 +1,14 @@
 import React, {Component} from 'react';
 import NewsContent from "./news/NewsContent";
-import {Calendar} from "antd";
 import GroupContent from "./home/GroupContent";
 import NotificationContent from "./notifs/NotificationContent";
+import CalendarContent from "./calendar/CalendarContent";
 import SettingsContent from "./settings/SettingsContent";
 
 class Content extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            news: {
-                image: "",
-                title: "",
-                text: "",
-                author: "",
-                date: ""
-            }
         };
     }
 
@@ -39,7 +32,9 @@ class Content extends Component {
                         users={this.props.users}
                         setCreatePost={this.props.setCreatePost}
                     />
-                    : this.props.active === 2 ? <Calendar/>
+                    : this.props.active === 2 ?
+                        <CalendarContent
+                            user={this.props.user}/>
                         : this.props.active === 3 ?
                             <NewsContent onNewsClick={this.props.onNewsClick}
                                          newsOpen={this.props.newsOpen}
