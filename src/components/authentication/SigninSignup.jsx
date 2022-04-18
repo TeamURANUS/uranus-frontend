@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {Input, Button} from 'antd';
+import {Input, Button, Modal} from 'antd';
 import {UserOutlined, EyeInvisibleOutlined, EyeTwoTone, LockOutlined} from '@ant-design/icons';
 
-import {login, register} from "../../services/authentication";
+import {forgotPassword, login, register} from "../../services/authentication";
 import {getUserByEmail} from "../../services/user";
 
 const svgPath = process.env.PUBLIC_URL + '/svg/';
@@ -17,13 +17,13 @@ class SigninSignup extends Component {
             loginError: "",
             registerEmail: "",
             registerPassword: "",
-            registerError: ""
+            registerError: "",
+            forgotModal: false
         };
     }
 
 
     login = async (email, password) => {
-        console.log(email, password);
         const res = await login(email, password);
         if (res.status === 200) {
             const dbUser = await getUserByEmail(res.data.data.email);
@@ -47,9 +47,7 @@ class SigninSignup extends Component {
     };
 
     register = async (email, password) => {
-        console.log(email, password);
         const res = await register(email, password);
-        console.log(res);
         if (res.status === 201) {
             const user = {
                 email: res.data.data.email,
@@ -64,16 +62,31 @@ class SigninSignup extends Component {
                 othermail: "",
                 image: ""
             };
-            console.log(user);
             this.props.setUser(res.data.data, true);
         } else {
             this.setState({registerError: res.data.message.replace("Firebase:", "").replace("auth/", "").replace(".", "")});
         }
     };
 
+    onForgotPassword = async () => {
+        this.setState({forgotModal: true});
+        await forgotPassword(this.state.loginEmail);
+    };
+
     render() {
         return (
+
             <div className="flex flex-row mx-auto place-content-center flex-wrap items-baseline h-screen">
+                <Modal
+                    closable={false}
+                    title="Password Reset"
+                    cancelButtonProps={{style: {display: 'none'}}}
+                    onOk={() => {
+                        this.setState({forgotModal: false});
+                    }}
+                    visible={this.state.forgotModal}>
+                    <p>Password reset link will send your email if it is registered </p>
+                </Modal>
                 <div className="max-w-lg min-w-[25%] mx-4  p-6 drop-shadow-xl bg-white rounded-md">
                     <img
                         className="w-80 m-auto"
@@ -96,6 +109,10 @@ class SigninSignup extends Component {
                         }}
                     />
                     <br/><br/>
+                    <button onClick={() => {
+                        this.onForgotPassword();
+                    }} className="block w-full text-right underline hover:text-red-500 cursor-pointer">Forgot Password?
+                    </button>
                     <p className="text-red-600">{this.state.loginError}</p>
                     <Button type="primary" size="large" onClick={() => {
                         this.login(this.state.loginEmail, this.state.loginPassword);
@@ -124,6 +141,7 @@ class SigninSignup extends Component {
                         }}
                     />
                     <br/><br/>
+                    <br/>
                     <p className="text-red-600">{this.state.registerError}</p>
                     <Button type="primary" size="large" onClick={() => {
                         this.register(this.state.registerEmail, this.state.registerPassword);

@@ -3,7 +3,6 @@ import NewsContent from "./news/NewsContent";
 import GroupContent from "./home/GroupContent";
 import NotificationContent from "./notifs/NotificationContent";
 import CalendarContent from "./calendar/CalendarContent";
-import SettingsContent from "./settings/SettingsContent";
 
 class Content extends Component {
     constructor(props) {
@@ -31,6 +30,10 @@ class Content extends Component {
                         search={this.props.search}
                         users={this.props.users}
                         setCreatePost={this.props.setCreatePost}
+                        reGetPost={this.props.reGetPosts}
+                        setClasses={this.props.setClasses}
+                        setCommunities={this.props.setCommunities}
+                        setStateData={this.props.setStateData}
                     />
                     : this.props.active === 2 ?
                         <CalendarContent

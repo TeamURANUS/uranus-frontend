@@ -131,7 +131,8 @@ class Educatied extends Component {
                             assistants: x[1].groupAssistants.map(a => a._key.path.segments[6].trim()),
                             members: x[1].groupMembers.map(a => a._key.path.segments[6].trim()),
                             postPermissions: x[1].groupPostPermissions,
-                            privacyPermissions: x[1].groupPrivacyPermissions
+                            privacyPermissions: x[1].groupPrivacyPermissions,
+                            posts: x[1].groupPosts.map(a => a._key.path.segments[6].trim())
                         }
                     ))
                 );
@@ -147,7 +148,8 @@ class Educatied extends Component {
                             assistants: x[1].groupAssistants.map(a => a._key.path.segments[6].trim()),
                             members: x[1].groupMembers.map(a => a._key.path.segments[6].trim()),
                             postPermissions: x[1].groupPostPermissions,
-                            privacyPermissions: x[1].groupPrivacyPermissions
+                            privacyPermissions: x[1].groupPrivacyPermissions,
+                            posts: x[1].groupPosts.map(a => a._key.path.segments[6].trim())
                         }
                     ))
                 );
@@ -159,13 +161,38 @@ class Educatied extends Component {
 
     changeGroupIndex = async (index) => {
         this.clearGroupState();
-        console.log("GROUP", this.state.activeGroupType, "INDEX", index);
-        this.setState({activeGroupIndex: index});
+        if (index !== -1) {
+            this.setState({activeGroupIndex: index});
+            let posts;
+            if (this.state.activeGroupType === "class") {
+                posts = await getPostsByGroupId(this.state.classes[index].id);
+            } else {
+                posts = await getPostsByGroupId(this.state.communities[index].id);
+            }
+            posts = posts.data.map(x => ({
+                id: x.id,
+                date: this.toDateTime(x.postDate.seconds),
+                title: x.postTitle,
+                text: x.postContent,
+                avatar: "https://joeschmoe.io/api/v1/",
+                author: x.postAuthor._key.path.segments[6],
+                isAdmin: x.postSentByAdmin,
+                comments: x.postComments.map(a => a._key.path.segments[6])
+            }));
+            this.setState({
+                allPosts: posts, posts: posts
+            });
+        }
+        window.localStorage.setItem('state', JSON.stringify(this.state));
+    };
+
+
+    reGetPosts = async () => {
         let posts;
         if (this.state.activeGroupType === "class") {
-            posts = await getPostsByGroupId(this.state.classes[index].id);
+            posts = await getPostsByGroupId(this.state.classes[this.state.activeGroupIndex].id);
         } else {
-            posts = await getPostsByGroupId(this.state.communities[index].id);
+            posts = await getPostsByGroupId(this.state.communities[this.state.activeGroupIndex].id);
         }
         posts = posts.data.map(x => ({
             id: x.id,
@@ -217,7 +244,6 @@ class Educatied extends Component {
     };
 
     setReadPost = (isRead, index) => {
-        console.log("READ POST", this.state.activeGroupType, this.state.activeGroupIndex);
         this.setState({readPost: isRead, readPostIndex: index});
     };
 
@@ -230,8 +256,12 @@ class Educatied extends Component {
     };
 
     setCreatePost = (value) => {
-        this.setState({createPost: value})
-    }
+        this.setState({createPost: value});
+    };
+
+    setStateData = (data) => {
+        this.setState(data);
+    };
 
     render() {
         return (
@@ -258,6 +288,7 @@ class Educatied extends Component {
                                                      setCommunities={this.setCommunities}
                                                      classes={this.state.classes}
                                                      communities={this.state.communities}
+                                                     setActiveGroupIndex={this.changeGroupIndex}
                                             />
                                             : ""
                                         }
@@ -280,6 +311,10 @@ class Educatied extends Component {
                                             users={this.state.users}
                                             setCreatePost={this.setCreatePost}
                                             logout={this.logout}
+                                            reGetPosts={this.reGetPosts}
+                                            setClasses={this.setClasses}
+                                            setCommunities={this.setCommunities}
+                                            setStateData={this.setStateData}
                                         />
                                     </div>
                                 </div>

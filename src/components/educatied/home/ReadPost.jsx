@@ -1,8 +1,6 @@
 import {Comment, Avatar, Tooltip} from 'antd';
-import moment from "moment";
 import ReadComment from "./ReadComment";
 import React, {useEffect, useState} from "react";
-import {getUserById} from "../../../services/user";
 import WriteComment from "./WriteComment";
 
 const ReadPost = (props) => {
@@ -18,7 +16,7 @@ const ReadPost = (props) => {
 
 
     return (
-        <div className="mt-10">
+        <div className="mt-10 md:min-w-[900px]">
             <button className="px-8 mb-3 py-2 border border-sky-500 rounded hover:text-white hover:bg-sky-500"
                     onClick={() => {
                         props.setReadPost(false, 0);
@@ -28,7 +26,7 @@ const ReadPost = (props) => {
             <p className="text-xl font-bold max-w-[1400px]">{props.post.title}</p>
             <Comment
                 className="text-xl"
-                author={<a className="text-xs font-bold">{user.name}</a>}
+                author={<span className="text-xs font-bold">{user.name}</span>}
                 avatar={<Avatar src={"https://joeschmoe.io/api/v1/" + user.id}/>}
                 content={
                     <p className="max-w-[1400px] text-lg">
@@ -36,7 +34,7 @@ const ReadPost = (props) => {
                     </p>
                 }
                 datetime={
-                    <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
+                    <Tooltip>
                         <span>{props.post.date}</span>
                     </Tooltip>
                 }
@@ -44,11 +42,10 @@ const ReadPost = (props) => {
             <hr/>
             <ul>
                 {props.post.comments.map((item, index) => {
-                    return <ReadComment index={index} key={index} id={item} users={props.users}
-                                     />;
+                    return <ReadComment index={index} key={index} id={item} users={props.users}/>;
                 })}
             </ul>
-            <WriteComment/>
+            <WriteComment user={props.user} post={props.post}/>
         </div>
     );
 };

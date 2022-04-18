@@ -34,4 +34,19 @@ export const login = async (email, password) => {
 };
 
 
+export const forgotPassword = async (email) => {
+    return await axios({
+        method: 'post',
+        url: backendUrl + '/api/auth/resetPassword',
+        data: {
+            email: email
+        }
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+
 
