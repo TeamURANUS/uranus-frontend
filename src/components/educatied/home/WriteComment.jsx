@@ -1,6 +1,6 @@
 import {Comment, Avatar, Form, Button, List, Input} from 'antd';
-import moment from 'moment';
 import React from "react";
+import {createComment, updateGroupData} from "../../../services/groups";
 
 const {TextArea} = Input;
 
@@ -19,7 +19,7 @@ const Editor = ({onChange, onSubmit, submitting, value}) => (
             <TextArea rows={4} onChange={onChange} value={value}/>
         </Form.Item>
         <Form.Item>
-            <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">
+            <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary" className="!rounded">
                 Add Comment
             </Button>
         </Form.Item>
@@ -27,15 +27,18 @@ const Editor = ({onChange, onSubmit, submitting, value}) => (
 );
 
 class WriteComment extends React.Component {
-    state = {
-        comments: [],
-        submitting: false,
-        value: '',
-        name: '',
-        avatarID: Math.floor(Math.random() * 18)
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            comments: [],
+            submitting: false,
+            value: '',
+            name: '',
+            avatarID: 'https://joeschmoe.io/api/v1/' + this.props.user.id
+        };
+    }
 
-    handleSubmit = () => {
+    handleSubmit = async () => {
         if (!this.state.value) {
             return;
         }
@@ -45,21 +48,31 @@ class WriteComment extends React.Component {
             name: this.props.name
         });
 
-        setTimeout(() => {
-            this.setState({
-                submitting: false,
-                value: '',
-                comments: [
-                    ...this.state.comments,
-                    {
-                        author: this.state.name,
-                        avatar: 'https://joeschmoe.io/api/v1/' + this.state.avatarID.toString(),
-                        content: <p>{this.state.value}</p>,
-                        datetime: moment().fromNow(),
-                    },
-                ],
-            });
-        }, 1000);
+        this.setState({
+            submitting: false,
+            value: '',
+            comments: [
+                ...this.state.comments,
+                {
+                    author: this.props.user.name + " " + this.props.user.lastname,
+                    avatar: 'https://joeschmoe.io/api/v1/' + this.props.user.id,
+                    content: <p>{this.state.value}</p>,
+                    datetime: new Date().toLocaleString("en-GB"),
+                },
+            ],
+        });
+        const data = {
+            commentAuthor: this.props.user.id,
+            commentContent: this.state.value,
+            commentDate: new Date(),
+        };
+        console.log(data);
+        const result = await createComment(this.props.post.id, data);
+        console.log(result);
+        // const updateData = {
+        //     postComments: [...this.props.post.comments,
+        // };
+        // await updateGroupData(group.id, updateData);
     };
 
     handleChange = e => {
@@ -75,8 +88,7 @@ class WriteComment extends React.Component {
             <>
                 {comments.length > 0 && <CommentList comments={comments}/>}
                 <Comment
-                    avatar={<Avatar src={"https://joeschmoe.io/api/v1/" + this.state.avatarID.toString()}
-                                    alt="Han Solo"/>}
+                    avatar={<Avatar src={'https://joeschmoe.io/api/v1/' + this.props.user.id} alt="pp"/>}
                     content={
                         <Editor
                             onChange={this.handleChange}

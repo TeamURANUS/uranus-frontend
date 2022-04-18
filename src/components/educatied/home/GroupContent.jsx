@@ -41,12 +41,13 @@ class GroupContent extends Component {
         const postIdList = activeGroup.posts;
         postIdList.push(postID);
         this.setCreatePostScreen(false);
-        const updateGroupResult = await updateGroupData(activeGroup.id, {groupPosts: postIdList});
+        await updateGroupData(activeGroup.id, {groupPosts: postIdList});
         this.props.reGetPost();
         this.setState({createModal: false});
     };
 
     onLeaveGroup = async () => {
+        const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
         this.setState({leaveModal: true, modal: false});
         this.props.setStateData({activeGroupIndex: -1});
         if (this.props.activeGroup === "class") {
@@ -54,11 +55,10 @@ class GroupContent extends Component {
         } else {
             this.props.setCommunities(this.props.classes.filter(x => x.id !== group.id));
         }
-        const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
         const data = {
             groupMembers: group.members.filter(x => x !== this.props.user.id)
         };
-        const result = await updateGroupData(group.id, data);
+        await updateGroupData(group.id, data);
     };
 
     render() {
@@ -117,6 +117,7 @@ class GroupContent extends Component {
                                     setReadPost={this.props.setReadPost}
                                     post={this.props.posts[this.props.readPostIndex]}
                                     users={this.props.users}
+                                    user={this.props.user}
                                 />
                                 : <div>
                                     <div>
