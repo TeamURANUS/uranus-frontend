@@ -4,7 +4,7 @@ import WritePost from "./WritePost";
 import ReadPost from "./ReadPost";
 import {Modal} from "antd";
 import {createPost, updateGroupData} from "../../../services/groups";
-import {getGroupEvents} from "../../../services/event";
+import {createEvent, getGroupEvents} from "../../../services/event";
 
 const svgPath = process.env.PUBLIC_URL + '/svg/';
 
@@ -22,7 +22,15 @@ class GroupContent extends Component {
             createModal: false,
             leaveModal: false,
             eventModal: false,
-            events: []
+            createEventModal: false,
+            events: [],
+            description: "",
+            date: new Date(),
+            duration: 0,
+            place: "",
+            capacity: 0,
+            eventCreateModalConfirm: false,
+            onLeaveAdminModal: false
         };
     }
 
@@ -57,17 +65,21 @@ class GroupContent extends Component {
 
     onLeaveGroup = async () => {
         const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
-        this.setState({leaveModal: true, modal: false});
-        this.props.setStateData({activeGroupIndex: -1});
-        if (this.props.activeGroup === "class") {
-            this.props.setClasses(this.props.classes.filter(x => x.id !== group.id));
+        if (group.role !== "admin") {
+            this.setState({leaveModal: true, modal: false});
+            this.props.setStateData({activeGroupIndex: -1});
+            if (this.props.activeGroup === "class") {
+                this.props.setClasses(this.props.classes.filter(x => x.id !== group.id));
+            } else {
+                this.props.setCommunities(this.props.classes.filter(x => x.id !== group.id));
+            }
+            const data = {
+                groupMembers: group.members.filter(x => x !== this.props.user.id)
+            };
+            await updateGroupData(group.id, data);
         } else {
-            this.props.setCommunities(this.props.classes.filter(x => x.id !== group.id));
+            this.setState({onLeaveAdminModal: true, modal:false});
         }
-        const data = {
-            groupMembers: group.members.filter(x => x !== this.props.user.id)
-        };
-        await updateGroupData(group.id, data);
     };
 
     onAssigmentShow = async () => {
@@ -80,6 +92,26 @@ class GroupContent extends Component {
             link: x.eventLink
         }));
         this.setState({events: result});
+    };
+
+    onCreateEventModal = () => {
+        this.setState({eventModal: false, createEventModal: true});
+    };
+
+    onCreateEvent = async () => {
+        const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
+        const data = {
+            eventDescription: this.state.description,
+            eventDate: new Date(this.state.date),
+            eventCapacity: parseInt(this.state.capacity),
+            eventDuration: parseInt(this.state.duration),
+            eventPlace: this.state.place,
+            eventOrganizers: [group.id],
+            organizerName: group.name,
+            eventParticipants: [group.admin, ...group.assistants, ...group.members],
+        };
+        this.setState({eventCreateModalConfirm: true, createEventModal: false});
+        await createEvent(data);
     };
 
     render() {
@@ -101,6 +133,32 @@ class GroupContent extends Component {
                     }}
                     visible={this.state.leaveModal}>
                     <p>You just leave the group </p>
+                </Modal>
+
+                <Modal
+                    closable={false}
+                    title="Leave Group Error"
+                    cancelButtonProps={{style: {display: 'none'}}}
+                    onOk={() => {
+                        this.setState({onLeaveAdminModal: false});
+                    }}
+                    visible={this.state.onLeaveAdminModal}>
+                    <p>You cannot leave the group since you are: admin</p>
+                </Modal>
+
+                <Modal
+                    closable={false}
+                    title={this.props.activeGroup === "class"
+                        ? "Assignment Created"
+                        : "Event Created"}
+                    cancelButtonProps={{style: {display: 'none'}}}
+                    onOk={() => {
+                        this.setState({eventCreateModalConfirm: false});
+                    }}
+                    visible={this.state.eventCreateModalConfirm}>
+                    <p>{this.props.activeGroup === "class"
+                        ? "Assignment Created Successfully"
+                        : "Event Created Successfully"}</p>
                 </Modal>
                 {this.props.activeGroupIndex === -1
                     ? <div className="flex flex-col mt-[10%] ml-[20%]">
@@ -221,9 +279,86 @@ class GroupContent extends Component {
                                     }}
                                         width={1000}
                                     >
+                                        <button onClick={() => this.onCreateEventModal()}
+                                                className="px-8 py-2 border border-green-500 hover:bg-green-500 hover:text-white rounded my-2"
+                                        >{this.props.activeGroup === "class"
+                                            ? "Create New Assignment"
+                                            : "Create New Event"}</button>
                                         {this.state.events.map((item, index) => {
-                                            return <p className="py-2 border-b border-zinc-300">{item.description}</p>;
+                                            return <div className="py-2 border-b border-zinc-300" key={index}>
+                                                <p className="mt-2 font-bold">{item.description}</p>
+                                                <p>Date: <span>{item.date}</span>, <a className="mx-2" target="_blank"
+                                                                                      href={item.link}>Click
+                                                    for
+                                                    Details</a></p>
+                                            </div>;
                                         })}
+                                    </Modal>
+
+                                    <Modal
+                                        closable={false}
+                                        title={this.props.activeGroup === "class"
+                                            ? "Create New Assignment"
+                                            : "Create New Event"}
+                                        visible={this.state.createEventModal} onCancel={() => {
+                                        this.setState({createEventModal: false});
+                                    }}
+                                        onOk={() => {
+                                            this.onCreateEvent();
+                                        }}
+                                        width={1000}
+                                    >
+                                        <div className="my-2">
+                                            <span className="mx-1">{this.props.activeGroup === "class"
+                                                ? "Assignment "
+                                                : "Event "} Description </span>
+                                            <input onChange={(e) => {
+                                                this.setState({description: e.target.value});
+                                            }}
+                                                   className="border border-zinc-400 focus:border-green-500 focus:outline-none py-1 px-2 w-full rounded block"/>
+                                        </div>
+                                        <div className="my-2 ">
+                                            <div className="inline-block w-1/2">
+                                                <span className="mx-1">{this.props.activeGroup === "class"
+                                                    ? "Assignment"
+                                                    : "Event"} Date </span>
+                                                <input type="datetime-local" onChange={(e) => {
+                                                    this.setState({date: e.target.value});
+                                                }}
+                                                       className="block w-full border border-zinc-400 focus:border-green-500 focus:outline-none rounded block py-1 px-2 mr-2"
+                                                />
+                                            </div>
+                                            <div className="inline-block w-1/2">
+                                                <span className="mx-2">Assignment Place </span>
+                                                <input onChange={(e) => {
+                                                    this.setState({place: e.target.value});
+                                                }}
+                                                       className="border border-zinc-400 focus:border-green-500 focus:outline-none w-full py-1 px-2 rounded block ml-2"/>
+                                            </div>
+                                        </div>
+
+                                        <div className="my-2 ">
+                                            <div className="inline-block w-1/2">
+                                                <span className="mx-1">{this.props.activeGroup === "class"
+                                                    ? "Assignment"
+                                                    : "Event"} Capacity </span>
+                                                <input onChange={(e) => {
+                                                    this.setState({capacity: e.target.value});
+                                                }}
+                                                       className="border border-zinc-400 focus:border-green-500 focus:outline-none w-full py-1 px-2 rounded block mr-2"
+                                                       type="number"/>
+                                            </div>
+                                            <div className="inline-block w-1/2 ">
+                                                <span className="mx-2">{this.props.activeGroup === "class"
+                                                    ? "Assignment"
+                                                    : "Event"} Duration </span>
+                                                <input onChange={(e) => {
+                                                    this.setState({duration: e.target.value});
+                                                }}
+                                                       className="border border-zinc-400 focus:border-green-500 focus:outline-none w-full py-1 px-2 rounded block ml-2"
+                                                       type="number"/>
+                                            </div>
+                                        </div>
                                     </Modal>
 
                                     <p className="my-5 text-xl font-bold border-b border-zinc-300 ">Posts</p>

@@ -4,6 +4,8 @@ import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import EventDetail from "./EventDetail";
 
+const svgPath = process.env.PUBLIC_URL + '/svg/';
+
 const toDateTime = (secs) => {
     const t = new Date(1970, 0, 1); // Epoch
     t.setSeconds(secs);
@@ -52,11 +54,17 @@ class CalendarContent extends Component {
             />
             <div className="mx-12 min-w-[500px] md:min-w-[800px]">
                 <p className="font-bold text-xl"> Events of {this.state.activeDate.toString().substring(0, 15)}</p>
+                {this.state.events.length > 0 ?
                 <ul className=" select-none ">
                     {this.state.events.map((item, index) => {
                         return <EventDetail index={index} key={index} item={item}/>;
                     })}
                 </ul>
+                    :  <img
+                        className="w-[500px] mt-20 ml-10"
+                        src={`${svgPath}undraw_booking_re_gw4j.svg`}
+                        alt="verify"
+                    />}
             </div>
         </div>);
     }

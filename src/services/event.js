@@ -23,3 +23,16 @@ export const getGroupEvents = async (groupID) => {
         return error.response;
     });
 };
+
+
+export const createEvent = async (data) => {
+    return await axios({
+        method: 'post',
+        url: backendUrl + '/api/events',
+        data: data
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
