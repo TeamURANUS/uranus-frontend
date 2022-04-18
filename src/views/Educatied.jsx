@@ -310,6 +310,7 @@ class Educatied extends Component {
                                             search={this.search}
                                             users={this.state.users}
                                             setCreatePost={this.setCreatePost}
+                                            logout={this.logout}
                                             reGetPosts={this.reGetPosts}
                                             setClasses={this.setClasses}
                                             setCommunities={this.setCommunities}
