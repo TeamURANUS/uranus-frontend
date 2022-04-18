@@ -4,8 +4,15 @@ import WritePost from "./WritePost";
 import ReadPost from "./ReadPost";
 import {Modal} from "antd";
 import {createPost, updateGroupData} from "../../../services/groups";
+import {getGroupEvents} from "../../../services/event";
 
 const svgPath = process.env.PUBLIC_URL + '/svg/';
+
+const toDateTime = (secs) => {
+    const t = new Date(1970, 0, 1); // Epoch
+    t.setSeconds(secs);
+    return t.toLocaleString("en-GB").replace(",", "");
+};
 
 class GroupContent extends Component {
     constructor(props) {
@@ -13,7 +20,9 @@ class GroupContent extends Component {
         this.state = {
             modal: false,
             createModal: false,
-            leaveModal: false
+            leaveModal: false,
+            eventModal: false,
+            events: []
         };
     }
 
@@ -59,6 +68,18 @@ class GroupContent extends Component {
             groupMembers: group.members.filter(x => x !== this.props.user.id)
         };
         await updateGroupData(group.id, data);
+    };
+
+    onAssigmentShow = async () => {
+        const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
+        this.setState({eventModal: true});
+        let result = await getGroupEvents(group.id);
+        result = result.data.map(x => ({
+            date: toDateTime(x.eventDate.seconds),
+            description: x.eventDescription,
+            link: x.eventLink
+        }));
+        this.setState({events: result});
     };
 
     render() {
@@ -130,6 +151,15 @@ class GroupContent extends Component {
                                         </button>
                                         <button
                                             onClick={() => {
+                                                this.onAssigmentShow();
+                                            }}
+                                            className="border border-orange-500 mr-2 p-2 px-6 rounded mt-5 hover:bg-orange-500 hover:text-white">
+                                            {this.props.activeGroup === "class"
+                                                ? "Assignments"
+                                                : "Events"}
+                                        </button>
+                                        <button
+                                            onClick={() => {
                                                 this.setCreatePostScreen(true);
                                             }}
                                             className="border border-green-500 p-2 px-6 rounded mt-5 hover:bg-green-500 hover:text-white">
@@ -179,6 +209,21 @@ class GroupContent extends Component {
                                             }}
                                             className="border border-red-500 hover:bg-red-500 hover:text-white px-6 py-1.5 rounded">Leave
                                         </button>
+                                    </Modal>
+                                    <Modal
+                                        closable={false}
+                                        cancelButtonProps={{style: {display: 'none'}}}
+                                        title={this.props.activeGroup === "class"
+                                            ? "Assignments"
+                                            : "Events"}
+                                        visible={this.state.eventModal} onOk={() => {
+                                        this.setState({eventModal: false});
+                                    }}
+                                        width={1000}
+                                    >
+                                        {this.state.events.map((item, index) => {
+                                            return <p className="py-2 border-b border-zinc-300">{item.description}</p>;
+                                        })}
                                     </Modal>
 
                                     <p className="my-5 text-xl font-bold border-b border-zinc-300 ">Posts</p>

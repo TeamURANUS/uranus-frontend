@@ -72,7 +72,6 @@ class WriteComment extends React.Component {
             postComments: [...this.props.post.comments, result]
         };
         this.props.post.comments.push(result);
-        console.log(updateData);
         await updatePostData(this.props.post.id, updateData);
     };
 
