@@ -5,14 +5,14 @@ import WriteComment from "./WriteComment";
 
 const ReadPost = (props) => {
 
-    const[user,setUser] = useState({
+    const [user, setUser] = useState({
         id: "id",
         name: "name"
     });
 
-    useEffect(()=>{
-        setUser(props.users.filter(x=>x.id===props.post.author)[0])
-    }, [props.users, props.post.author])
+    useEffect(() => {
+        setUser(props.users.filter(x => x.id === props.post.author)[0]);
+    }, [props.users, props.post.author]);
 
 
     return (

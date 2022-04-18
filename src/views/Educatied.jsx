@@ -34,7 +34,7 @@ class Educatied extends Component {
     toDateTime = (secs) => {
         const t = new Date(1970, 0, 1); // Epoch
         t.setSeconds(secs);
-        return t.toLocaleString("en-GB").replace(",", "");
+        return t;
     };
 
     clearHomeState = () => {
@@ -90,7 +90,7 @@ class Educatied extends Component {
         this.setState({activeMainMenu: newMenu});
         if (newMenu === 1) {
             document.title = "Educatied - Home";
-            this.setState({path: ["Home", "Class"], activeGroupType: "class", activeGroupIndex: 0, newsOpen: false});
+            this.setState({path: ["Home", "Class"], activeGroupType: "class", activeGroupIndex: -1, newsOpen: false});
         } else if (newMenu === 2) {
             document.title = "Educatied - Calendar";
             this.setState({path: ["Calendar"], newsOpen: false});
@@ -171,14 +171,15 @@ class Educatied extends Component {
             }
             posts = posts.data.map(x => ({
                 id: x.id,
-                date: this.toDateTime(x.postDate.seconds),
+                date: this.toDateTime(x.postDate.seconds).toLocaleString("en-GB").replace(",", ""),
+                dateObj: this.toDateTime(x.postDate.seconds),
                 title: x.postTitle,
                 text: x.postContent,
                 avatar: "https://joeschmoe.io/api/v1/",
                 author: x.postAuthor._key.path.segments[6],
                 isAdmin: x.postSentByAdmin,
                 comments: x.postComments.map(a => a._key.path.segments[6])
-            }));
+            })).sort((a, b) => a.dateObj < b.dateObj ? -1 : 1);
             this.setState({
                 allPosts: posts, posts: posts
             });
@@ -196,14 +197,15 @@ class Educatied extends Component {
         }
         posts = posts.data.map(x => ({
             id: x.id,
-            date: this.toDateTime(x.postDate.seconds),
+            date: this.toDateTime(x.postDate.seconds).toLocaleString("en-GB").replace(",", ""),
+            dateObj: this.toDateTime(x.postDate.seconds),
             title: x.postTitle,
             text: x.postContent,
             avatar: "https://joeschmoe.io/api/v1/",
             author: x.postAuthor._key.path.segments[6],
             isAdmin: x.postSentByAdmin,
             comments: x.postComments.map(a => a._key.path.segments[6])
-        }));
+        })).sort((a, b) => a.dateObj < b.dateObj ? -1 : 1);
         this.setState({
             allPosts: posts, posts: posts
         });
