@@ -273,7 +273,8 @@ class Educatied extends Component {
                         : this.state.user.isVerified === false ? <EmailVerification setUser={this.setUser}/>
                             :
                             <div>
-                                <TopMenu path={this.state.path} user={this.state.user} logout={this.logout}/>
+                                <TopMenu path={this.state.path} user={this.state.user} logout={this.logout}
+                                         goHome={this.changeMainMenu}/>
                                 <div className="flex">
                                     <MainMenu activeMenuChange={this.changeMainMenu}
                                               activeMenu={this.state.activeMainMenu}

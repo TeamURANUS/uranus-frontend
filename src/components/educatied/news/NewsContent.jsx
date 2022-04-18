@@ -30,7 +30,7 @@ class NewsContent extends Component {
             date: x.documentDate,
             title: x.documentTitle,
             url: x.documentId
-        }));
+        })).sort((a, b) => parseInt(a.date.split(" ")[0]) < parseInt(b.date.split(" ")[0]) ? -1 : 1);
         this.setState({newsList: result});
     }
 

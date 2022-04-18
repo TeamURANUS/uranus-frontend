@@ -3,6 +3,7 @@ import NewsContent from "./news/NewsContent";
 import GroupContent from "./home/GroupContent";
 import NotificationContent from "./notifs/NotificationContent";
 import CalendarContent from "./calendar/CalendarContent";
+import SettingsContent from "./settings/SettingsContent";
 
 class Content extends Component {
     constructor(props) {

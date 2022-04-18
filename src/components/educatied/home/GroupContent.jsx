@@ -29,7 +29,8 @@ class GroupContent extends Component {
             duration: 0,
             place: "",
             capacity: 0,
-            eventCreateModalConfirm: false
+            eventCreateModalConfirm: false,
+            onLeaveAdminModal: false
         };
     }
 
@@ -64,17 +65,21 @@ class GroupContent extends Component {
 
     onLeaveGroup = async () => {
         const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
-        this.setState({leaveModal: true, modal: false});
-        this.props.setStateData({activeGroupIndex: -1});
-        if (this.props.activeGroup === "class") {
-            this.props.setClasses(this.props.classes.filter(x => x.id !== group.id));
+        if (group.role !== "admin") {
+            this.setState({leaveModal: true, modal: false});
+            this.props.setStateData({activeGroupIndex: -1});
+            if (this.props.activeGroup === "class") {
+                this.props.setClasses(this.props.classes.filter(x => x.id !== group.id));
+            } else {
+                this.props.setCommunities(this.props.classes.filter(x => x.id !== group.id));
+            }
+            const data = {
+                groupMembers: group.members.filter(x => x !== this.props.user.id)
+            };
+            await updateGroupData(group.id, data);
         } else {
-            this.props.setCommunities(this.props.classes.filter(x => x.id !== group.id));
+            this.setState({onLeaveAdminModal: true, modal:false});
         }
-        const data = {
-            groupMembers: group.members.filter(x => x !== this.props.user.id)
-        };
-        await updateGroupData(group.id, data);
     };
 
     onAssigmentShow = async () => {
@@ -128,6 +133,17 @@ class GroupContent extends Component {
                     }}
                     visible={this.state.leaveModal}>
                     <p>You just leave the group </p>
+                </Modal>
+
+                <Modal
+                    closable={false}
+                    title="Leave Group Error"
+                    cancelButtonProps={{style: {display: 'none'}}}
+                    onOk={() => {
+                        this.setState({onLeaveAdminModal: false});
+                    }}
+                    visible={this.state.onLeaveAdminModal}>
+                    <p>You cannot leave the group since you are: admin</p>
                 </Modal>
 
                 <Modal

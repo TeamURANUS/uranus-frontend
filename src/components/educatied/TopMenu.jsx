@@ -18,7 +18,10 @@ class TopMenu extends Component {
     render() {
         return (
             <div className="z-10 w-full flex items-center fixed bg-white max-h-[4rem] h-[4rem] drop-shadow-xl">
-                <p className="basis-3/4 text-center text-2xl font-bold flex items-center justify-items-center ml-4 my-0">Educatied</p>
+                <p onClick={() => {
+                    this.props.goHome(1);
+                }}
+                   className="basis-3/4 text-center text-2xl font-bold flex items-center justify-items-center ml-4 my-0 cursor-pointer">Educatied</p>
                 <div className=" flex justify-end items-center basis-1/4 mr-5">
                     <Dropdown overlay={this.menu} trigger={['click']}>
                         <span className="select-none flex items-center text-black" onClick={e => e.preventDefault()}>

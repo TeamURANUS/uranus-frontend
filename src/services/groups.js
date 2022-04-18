@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost:3030";
+const backendUrl = "http://localhost:8081";
 
 export const getGroupsByUser = async (userid) => {
     return await axios({
