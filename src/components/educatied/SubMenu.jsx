@@ -9,6 +9,8 @@ class SubMenu extends Component {
         super(props);
         this.state = {
             joinModal: false,
+            joinIndex: -1,
+            joinInfoModel: false,
             groupsForJoin: []
         };
     }
@@ -60,21 +62,18 @@ class SubMenu extends Component {
     }
 
     joinNewGroup = async (index) => {
-        console.log(index);
+        this.setState({joinIndex: index, joinModal: false});
         const data = {
             groupMembers: [...this.state.groupsForJoin[index].members, this.props.user.id]
         };
-        console.log(data);
         const result = await updateGroupData(this.state.groupsForJoin[index].id, data);
-        console.log(result);
+        this.setState({joinInfoModel: true});
         await this.getUserGroups();
-        this.setState({joinModal: false});
     };
 
     openModal = async () => {
         this.setState({joinModal: true});
         let groups = await getGroups();
-        console.log(groups.data.data);
         groups = groups.data.data.filter(x => this.props.activeGroup === "class" ? x.groupIsCommunity === false : x.groupIsCommunity)
             .map(x => (
                 {
@@ -92,7 +91,6 @@ class SubMenu extends Component {
             ));
         groups = groups.filter(x => this.props.activeGroup === "class"
             ? !this.props.classes.map(a => a.id).includes(x.id) : !this.props.communities.map(a => a.id).includes(x.id));
-        console.log(groups);
         this.setState({groupsForJoin: groups});
     };
 
@@ -155,6 +153,15 @@ class SubMenu extends Component {
                                className="border-b border-zinc-2oo py-2 px-2 hover:text-white hover:bg-sky-500 cursor-pointer"
                     >{item.name}</li>;
                 })}
+            </Modal>
+            <Modal
+                closable={false}
+                cancelButtonProps={{style: {display: 'none'}}}
+                title="Welcome"
+                visible={this.state.joinInfoModel} onOk={() => {
+                this.setState({joinInfoModel: false});
+            }}>
+                <p>Welcome {this.state.joinIndex >= 0 ? this.state.groupsForJoin[this.state.joinIndex].name : ""}</p>
             </Modal>
         </div>);
     }

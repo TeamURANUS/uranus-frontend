@@ -21,7 +21,6 @@ class NotificationContent extends Component {
 
     async componentDidMount() {
         let result = await getNotifications();
-        console.log(result);
         result = result.data.data.map(x => ({
             id: x.id,
             content: x.notifContent,

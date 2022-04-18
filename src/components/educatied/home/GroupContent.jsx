@@ -4,15 +4,25 @@ import WritePost from "./WritePost";
 import ReadPost from "./ReadPost";
 import {Modal} from "antd";
 import {createPost, updateGroupData} from "../../../services/groups";
+import {getGroupEvents} from "../../../services/event";
 
 const svgPath = process.env.PUBLIC_URL + '/svg/';
+
+const toDateTime = (secs) => {
+    const t = new Date(1970, 0, 1); // Epoch
+    t.setSeconds(secs);
+    return t.toLocaleString("en-GB").replace(",", "");
+};
 
 class GroupContent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             modal: false,
-            createModal: false
+            createModal: false,
+            leaveModal: false,
+            eventModal: false,
+            events: []
         };
     }
 
@@ -39,15 +49,37 @@ class GroupContent extends Component {
         const postID = postResult.data.message.replace("Post added successfully! ", "").trim();
         const postIdList = activeGroup.posts;
         postIdList.push(postID);
-        const updateGroupResult = await updateGroupData(activeGroup.id, {groupPosts: postIdList});
         this.setCreatePostScreen(false);
+        await updateGroupData(activeGroup.id, {groupPosts: postIdList});
         this.props.reGetPost();
         this.setState({createModal: false});
     };
 
-    onLeaveGroup = () => {
+    onLeaveGroup = async () => {
         const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
-        console.log(group);
+        this.setState({leaveModal: true, modal: false});
+        this.props.setStateData({activeGroupIndex: -1});
+        if (this.props.activeGroup === "class") {
+            this.props.setClasses(this.props.classes.filter(x => x.id !== group.id));
+        } else {
+            this.props.setCommunities(this.props.classes.filter(x => x.id !== group.id));
+        }
+        const data = {
+            groupMembers: group.members.filter(x => x !== this.props.user.id)
+        };
+        await updateGroupData(group.id, data);
+    };
+
+    onAssigmentShow = async () => {
+        const group = this.props.activeGroup === "class" ? this.props.classes[this.props.activeGroupIndex] : this.props.communities[this.props.activeGroupIndex];
+        this.setState({eventModal: true});
+        let result = await getGroupEvents(group.id);
+        result = result.data.map(x => ({
+            date: toDateTime(x.eventDate.seconds),
+            description: x.eventDescription,
+            link: x.eventLink
+        }));
+        this.setState({events: result});
     };
 
     render() {
@@ -59,6 +91,16 @@ class GroupContent extends Component {
                     footer={null}
                     visible={this.state.createModal}>
                     <p>Please wait to create post</p>
+                </Modal>
+                <Modal
+                    closable={false}
+                    title="Leave Group"
+                    cancelButtonProps={{style: {display: 'none'}}}
+                    onOk={() => {
+                        this.setState({leaveModal: false});
+                    }}
+                    visible={this.state.leaveModal}>
+                    <p>You just leave the group </p>
                 </Modal>
                 {this.props.activeGroupIndex === -1
                     ? <div className="flex flex-col mt-[10%] ml-[20%]">
@@ -96,6 +138,7 @@ class GroupContent extends Component {
                                     setReadPost={this.props.setReadPost}
                                     post={this.props.posts[this.props.readPostIndex]}
                                     users={this.props.users}
+                                    user={this.props.user}
                                 />
                                 : <div>
                                     <div>
@@ -105,6 +148,15 @@ class GroupContent extends Component {
                                             }}
                                             className="border border-sky-500 mr-2 p-2 px-6 rounded mt-5 hover:bg-sky-500 hover:text-white">
                                             Details
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                this.onAssigmentShow();
+                                            }}
+                                            className="border border-orange-500 mr-2 p-2 px-6 rounded mt-5 hover:bg-orange-500 hover:text-white">
+                                            {this.props.activeGroup === "class"
+                                                ? "Assignments"
+                                                : "Events"}
                                         </button>
                                         <button
                                             onClick={() => {
@@ -157,6 +209,21 @@ class GroupContent extends Component {
                                             }}
                                             className="border border-red-500 hover:bg-red-500 hover:text-white px-6 py-1.5 rounded">Leave
                                         </button>
+                                    </Modal>
+                                    <Modal
+                                        closable={false}
+                                        cancelButtonProps={{style: {display: 'none'}}}
+                                        title={this.props.activeGroup === "class"
+                                            ? "Assignments"
+                                            : "Events"}
+                                        visible={this.state.eventModal} onOk={() => {
+                                        this.setState({eventModal: false});
+                                    }}
+                                        width={1000}
+                                    >
+                                        {this.state.events.map((item, index) => {
+                                            return <p className="py-2 border-b border-zinc-300">{item.description}</p>;
+                                        })}
                                     </Modal>
 
                                     <p className="my-5 text-xl font-bold border-b border-zinc-300 ">Posts</p>

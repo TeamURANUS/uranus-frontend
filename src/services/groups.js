@@ -60,11 +60,34 @@ export const createPost = async (data) => {
     });
 };
 
+export const createComment = async (data) => {
+    return await axios({
+        method: 'post',
+        url: backendUrl + '/api/comments',
+        data: data
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
 
 export const updateGroupData = async (groupId, data) => {
     return await axios({
         method: 'put',
         url: backendUrl + '/api/groups/' + groupId,
+        data: data
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+export const updatePostData = async (postId, data) => {
+    return await axios({
+        method: 'put',
+        url: backendUrl + '/api/posts/' + postId,
         data: data
     }).then(result => {
         return result;
@@ -83,4 +106,6 @@ export const getGroups = async () => {
         return error.response;
     });
 };
+
+
 

@@ -119,7 +119,6 @@ class Educatied extends Component {
         });
         const result = await getGroupsByUser(this.state.user.id);
         if (result.status === 200) {
-            console.log("GROUPSSSS", result);
             if (this.state.activeGroup === "class") {
                 this.setClasses(
                     result.data.filter(x => x[1].groupIsCommunity === false).map(x => (
@@ -162,8 +161,7 @@ class Educatied extends Component {
 
     changeGroupIndex = async (index) => {
         this.clearGroupState();
-        if(index !== -1) {
-            console.log("GROUP", this.state.activeGroupType, "INDEX", index);
+        if (index !== -1) {
             this.setState({activeGroupIndex: index});
             let posts;
             if (this.state.activeGroupType === "class") {
@@ -187,6 +185,7 @@ class Educatied extends Component {
         }
         window.localStorage.setItem('state', JSON.stringify(this.state));
     };
+
 
     reGetPosts = async () => {
         let posts;
@@ -245,7 +244,6 @@ class Educatied extends Component {
     };
 
     setReadPost = (isRead, index) => {
-        console.log("READ POST", this.state.activeGroupType, this.state.activeGroupIndex);
         this.setState({readPost: isRead, readPostIndex: index});
     };
 
@@ -259,6 +257,10 @@ class Educatied extends Component {
 
     setCreatePost = (value) => {
         this.setState({createPost: value});
+    };
+
+    setStateData = (data) => {
+        this.setState(data);
     };
 
     render() {
@@ -309,6 +311,9 @@ class Educatied extends Component {
                                             users={this.state.users}
                                             setCreatePost={this.setCreatePost}
                                             reGetPosts={this.reGetPosts}
+                                            setClasses={this.setClasses}
+                                            setCommunities={this.setCommunities}
+                                            setStateData={this.setStateData}
                                         />
                                     </div>
                                 </div>

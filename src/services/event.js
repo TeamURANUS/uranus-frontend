@@ -12,3 +12,14 @@ export const getUserEvents = async (userId) => {
         return error.response;
     });
 };
+
+export const getGroupEvents = async (groupID) => {
+    return await axios({
+        method: 'get',
+        url: backendUrl + '/api/events/organizationEventLog/' + groupID
+    }).then(result => {
+        return result;
+    }).catch(error => {
+        return error.response;
+    });
+};
